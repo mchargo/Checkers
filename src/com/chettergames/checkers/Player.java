@@ -2,9 +2,10 @@ package com.chettergames.checkers;
 
 public abstract class Player 
 {
-	public Player(Game game)
+	public Player(Game game, int number)
 	{
 		this.game = game;
+		this.number = number;
 	}
 	
 	public abstract void prepareForNewGame();
@@ -16,7 +17,9 @@ public abstract class Player
 	
 	public String getName(){return name;}
 	public void setName(String name){this.name = name;}
+	public int getNumber(){return number;}
 	
 	private Game game;
 	private String name;
+	private int number;
 }

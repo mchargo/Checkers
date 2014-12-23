@@ -2,18 +2,39 @@ package com.chettergames.checkers;
 
 public class Game 
 {
+	public Game(){}
+	
 	public void newHumanVSHuman()
 	{
-		
+		board = new Board();
+		player1 = new HumanPlayer(this, 1);
+		player2 = new HumanPlayer(this, 2);
 	}
 	
 	public void checkForWin()
 	{
 		
 	}
+	
+	public void postGame()
+	{
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				playGame();
+			}
+		});
+	}
+	
 	public void playGame()
 	{
+		boolean playing = true;
 		
+		while(playing)
+		{
+			
+		}
 	}
 	
 	public static int MOVE_VALID 			= 0;
