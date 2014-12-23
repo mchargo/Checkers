@@ -14,9 +14,51 @@ public class Game
 	public static final int NO_WIN = 0;
 	public static final int RED_WIN = 1;
 	public static final int BLACK_WIN = 2;
+	
 	public int checkForWin()
 	{
-		return NO_WIN;
+		boolean blackFound=false;
+		boolean redFound=false;
+		int row = 0;
+		int col = 0;
+		while(row<8)
+		{
+			col =0;
+			while(col<8)
+			{
+				int piece = board.getPiece(row, col);
+				col++;
+				if(piece==Piece.RED)
+				{
+					redFound=true;
+				}
+				if(piece==Piece.BLACK)
+				{
+					blackFound=true;
+				}
+				if(piece==Piece.BLACK_KING)
+				{
+					blackFound=true;
+				}
+				if(piece==Piece.RED_KING)
+				{
+					redFound=true;
+				}
+			}
+			row++;
+		}
+		
+		
+		
+		if(redFound&&blackFound)
+		{
+			return NO_WIN;
+		}else if(redFound&&!blackFound){
+			return RED_WIN;
+		}else if(!redFound&&blackFound){
+			return BLACK_WIN;
+		}
+		return 0;
 	}
 	
 	public void postGame()

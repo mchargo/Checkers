@@ -1,4 +1,5 @@
 package com.chettergames.checkers;
+import java.util.*;
 
 public class HumanPlayer extends Player 
 {
@@ -11,7 +12,9 @@ public class HumanPlayer extends Player
 	public void prepareForNewGame() {}
 
 	@Override
-	public void promptForName() {}
+	public void promptForName() 
+	{
+	}
 
 	@Override
 	public void myTurn() {}
