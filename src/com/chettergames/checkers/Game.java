@@ -11,9 +11,12 @@ public class Game
 		player2 = new HumanPlayer(this, 2);
 	}
 	
-	public void checkForWin()
+	public static final int NO_WIN = 0;
+	public static final int RED_WIN = 1;
+	public static final int BLACK_WIN = 2;
+	public int checkForWin()
 	{
-		
+		return NO_WIN;
 	}
 	
 	public void postGame()
