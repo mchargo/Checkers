@@ -9,8 +9,16 @@ public class Game
 		board = new Board();
 		this.newBoard();
 		player1 = new HumanPlayer(this, 1, new Piece(false, false));
+		player1.prepareForNewGame();
 		player2 = new HumanPlayer(this, 2, new Piece(true, false));
+		player2.prepareForNewGame();
 		board.printBoard();
+	}
+	
+	public void readyPlayers()
+	{
+		player1.promptForName();
+		player2.promptForName();
 	}
 
 	public boolean checkForWin()
@@ -273,22 +281,11 @@ public class Game
 	private Player currentPlayer;
 	private Board board;
 
-	private boolean isJumping;
-	private int activeRow;
-	private int activeColumn;
-
-	public static int DIRECTION_UP = 0;
-	public static int DIRECTION_DOWN = 0;
-
 	public static void main(String[] args) 
 	{
 		Game game = new Game();
 		game.newHumanVSHuman();
+		game.readyPlayers();
 		game.postGame();
-		
-		try{
-			Thread.sleep(1);
-		}catch(Exception e){}
-		System.exit(0);
 	}
 }

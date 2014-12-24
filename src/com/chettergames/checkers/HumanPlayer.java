@@ -13,8 +13,8 @@ public class HumanPlayer extends Player
 	@Override
 	public void promptForName() 
 	{
+	
 	}
-
 	@Override
 	public void myTurn() 
 	{
