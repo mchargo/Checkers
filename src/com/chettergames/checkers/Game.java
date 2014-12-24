@@ -283,9 +283,13 @@ public class Game
 
 	public static void main(String[] args) 
 	{
+		CheckersUI checkers = new CheckersUI(new Board());
+		
+		return;
+		/*
 		Game game = new Game();
 		game.newHumanVSHuman();
 		game.readyPlayers();
-		game.postGame();
+		game.postGame();*/
 	}
 }
