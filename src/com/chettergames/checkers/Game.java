@@ -3,53 +3,46 @@ package com.chettergames.checkers;
 public class Game 
 {
 	public Game(){}
-	
+
 	public void newHumanVSHuman()
 	{
 		board = new Board();
 		player1 = new HumanPlayer(this, 1);
 		player2 = new HumanPlayer(this, 2);
 	}
-	
+
 	public static final int NO_WIN = 0;
 	public static final int RED_WIN = 1;
 	public static final int BLACK_WIN = 2;
-	
+
 	public int checkForWin()
 	{
 		boolean blackFound=false;
 		boolean redFound=false;
-		int row = 0;
-		int col = 0;
-		while(row<8)
+		for(int row=0; row<8; row++)
 		{
-			col =0;
-			while(col<8)
+			for(int col=0; col<8; col++)
 			{
+
 				int piece = board.getPiece(row, col);
-				col++;
-				if(piece==Piece.RED)
+				if(piece==Piece.RED||piece==Piece.RED_KING)
 				{
 					redFound=true;
 				}
-				if(piece==Piece.BLACK)
+				if(piece==Piece.BLACK||piece==Piece.BLACK_KING)
 				{
 					blackFound=true;
 				}
-				if(piece==Piece.BLACK_KING)
+				if(redFound&&blackFound)
 				{
-					blackFound=true;
-				}
-				if(piece==Piece.RED_KING)
-				{
-					redFound=true;
+					break;
 				}
 			}
-			row++;
+			if(redFound&&blackFound)
+			{
+				break;
+			}
 		}
-		
-		
-		
 		if(redFound&&blackFound)
 		{
 			return NO_WIN;
@@ -60,7 +53,7 @@ public class Game
 		}
 		return 0;
 	}
-	
+
 	public void postGame()
 	{
 		new Thread(new Runnable()
@@ -71,17 +64,17 @@ public class Game
 			}
 		});
 	}
-	
+
 	public void playGame()
 	{
 		boolean playing = true;
-		
+
 		while(playing)
 		{
-			
+
 		}
 	}
-	
+
 	public static int MOVE_VALID 			= 0;
 	public static int MOVE_INVALID 			= 1;
 	public static int MOVE_VALID_GO_AGAIN 	= 2;
@@ -97,23 +90,23 @@ public class Game
 	{
 		return false;
 	}
-	
+
 	public Board getBoard(){return board;}
-	
+
 	private Player player1;
 	private Player player2;
 	private Player currentPlayer;
 	private Board board;
-	
+
 	private boolean isJumping;
 	private int activeRow;
 	private int activeColumn;
-	
+
 	public static int DIRECTION_UP = 0;
 	public static int DIRECTION_DOWN = 0;
-	
+
 	public static void main(String[] args) 
 	{
-		
+
 	}
 }
