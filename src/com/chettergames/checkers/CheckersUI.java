@@ -1,16 +1,23 @@
 package com.chettergames.checkers;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,10 +33,10 @@ public class CheckersUI implements WindowListener
 		frame = new JFrame("Chetter-Games: Checkers");
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());
-		
+
 		int rows = 33;
 		int columns = 23;
-		
+
 		latch = new CountDownLatch(1);
 		chatPanel = new JPanel();
 		chatPanel.setPreferredSize(new Dimension(200, 600));
@@ -65,16 +72,16 @@ public class CheckersUI implements WindowListener
 		centerLayout.add(pane);
 		chatPanel.add(centerLayout, BorderLayout.CENTER);
 
-		panel = new CheckersPanel();
-		content.add(panel, BorderLayout.CENTER);
-		
+		panel = new CheckersPanel(board);
+		panel.loadImages();
+
 		frame.addWindowListener(this);
-		
+
 		content.add(panel, BorderLayout.CENTER);
 		content.add(chatPanel, BorderLayout.EAST);
-		
+
 		frame.getContentPane().add(content);
-		
+
 		frame.getContentPane().setPreferredSize(new Dimension(800, 610));
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -82,7 +89,7 @@ public class CheckersUI implements WindowListener
 
 		field.requestFocus();
 	}
-	
+
 	@Override public void windowActivated(WindowEvent e) {}
 	@Override public void windowClosed(WindowEvent e){}
 	@Override public void windowDeactivated(WindowEvent e){}
@@ -131,6 +138,7 @@ public class CheckersUI implements WindowListener
 		{
 			latch.await();
 			resetLatch();
+			area.append(entered + "\n");
 			return entered.trim();
 		} catch (InterruptedException e) 
 		{
@@ -223,6 +231,30 @@ public class CheckersUI implements WindowListener
 		latch = new CountDownLatch(1);
 	}
 
+	public Point waitForClick()
+	{
+		return panel.getClick();
+	}
+
+	public void setActive(int row, int col)
+	{
+		panel.activeRow = row;
+		panel.activeCol = col;
+		panel.active = true;
+	}
+
+	public Point getActive()
+	{
+		if(panel.active)
+			return new Point(panel.activeRow, panel.activeCol);
+		else return null;
+	}
+	
+	public void disableActive()
+	{
+		panel.active = false;
+	}
+
 	private boolean exitOnClose;
 	private JTextArea area;
 	private JPanel chatPanel;
@@ -230,22 +262,179 @@ public class CheckersUI implements WindowListener
 	private JTextField field;
 	private String entered;
 	private CountDownLatch latch;
-	
+
 	private JFrame frame;
 	private CheckersPanel panel;
-	
-	private class CheckersPanel extends JPanel
+
+	private class CheckersPanel extends JPanel implements MouseListener
 	{
-		public CheckersPanel()
+		public CheckersPanel(Board board)
 		{
 			super();
+			this.board = board;
+			loaded = false;
+			squareSize = 600.00f / 8.00f;
+			vsync = 60;
+			active = false;
+			this.startRepaintLoop();
+			this.addMouseListener(this);
 		}
-		
+
 		@Override
 		public void paintComponent(Graphics g)
 		{
+			if(!loaded) return;
 			Graphics2D g2 = (Graphics2D)g;
 			g2.drawRect(0, 0, 599, 599);
+
+			for(int row = 0;row < 8;row++)
+			{
+				for(int col = 0;col < 8;col++)
+				{
+					int x = (int)((float)col * squareSize);
+					int y = (int)((float)row * squareSize);
+
+					if(!board.isBlack(row, col))
+						g2.drawImage(lightSquare, x, y, (int)squareSize, (int)squareSize, null);
+					else {
+						g2.drawImage(darkSquare, x, y, (int)squareSize, (int)squareSize, null);
+
+						Piece piece = board.getPiece(row, col);
+
+						if(piece == null) continue;
+						if(piece.isRed())
+							g2.drawImage(lightChecker, x, y, (int)squareSize, (int)squareSize, null);
+						else g2.drawImage(darkChecker, x, y, (int)squareSize, (int)squareSize, null);
+					}
+					
+					if(active && activeRow == row && activeCol == col)
+					{
+						g2.setColor(Color.yellow);
+						g2.drawRect(x, y, (int)squareSize - 1, (int)squareSize - 1);
+					}
+				}
+			}
 		}
+
+		public void loadImages()
+		{
+			if(darkChecker == null)
+			{
+				File darkCheckerFile = new File("img/dark-checker.png");
+				File lightCheckerFile = new File("img/light-checker.png");
+				File darkSquareFile = new File("img/dark-square.png");
+				File lightSquareFile = new File("img/light-square.png");
+
+				System.out.println(darkCheckerFile.getAbsolutePath());
+
+				try
+				{
+					darkChecker = ImageIO.read(darkCheckerFile);
+					lightChecker = ImageIO.read(lightCheckerFile);
+					darkSquare = ImageIO.read(darkSquareFile);
+					lightSquare = ImageIO.read(lightSquareFile);
+				}catch(Exception e)
+				{
+					System.out.println("Could not load images.");
+				}
+
+				darkCheckerFile = null;
+				lightCheckerFile = null;
+				darkSquareFile = null;
+				lightSquareFile = null;
+				loaded = true;
+			}
+		}
+
+		@Override public void mouseClicked(MouseEvent e) {}
+		@Override public void mouseReleased(MouseEvent e) {}
+		@Override public void mouseEntered(MouseEvent e) {}
+		@Override public void mouseExited(MouseEvent e) {}
+		@Override 
+		public void mousePressed(MouseEvent e) 
+		{
+			int row = (int)(e.getY() / squareSize);
+			int col = (int)(e.getX() / squareSize);
+
+			point = new Point(row, col);
+
+			try
+			{
+				latch.countDown();
+			}catch(Exception ex){}
+		}
+		
+		public void startRepaintLoop()
+		{
+			if(repaintThread != null ||
+					repainting == true) return;
+			
+			repaintThread = new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if(repainting) return;
+					
+					repainting = true;
+					
+					while(repainting)
+					{
+						try
+						{
+							Thread.sleep(1000 / vsync);
+							CheckersPanel.this.repaint();
+							System.out.println("repainting");
+						}catch(Exception e){}
+					}
+					
+				}
+			});
+			repaintThread.start();
+		}
+		
+		public void stopRepainting()
+		{
+			repainting = false;
+			try
+			{
+				repaintThread.interrupt();
+				repaintThread.join();
+			}catch(Exception e){}
+		}
+
+		public Point getClick()
+		{
+			latch = new CountDownLatch(1);
+
+			try
+			{
+				latch.await();
+			}catch(Exception e){}
+			latch = null;
+
+			return point;
+		}
+
+		private CountDownLatch latch;
+		private Point point;
+
+		private BufferedImage darkChecker;
+		private BufferedImage lightChecker;
+
+		private BufferedImage darkSquare;
+		private BufferedImage lightSquare;
+		private Board board;
+		private boolean loaded;
+		private float squareSize;
+
+		private boolean active;
+		private int activeRow;
+		private int activeCol;
+		
+		private boolean repainting;
+		private Thread repaintThread;
+		
+		private int vsync;
 	}
 }

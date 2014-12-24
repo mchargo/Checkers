@@ -2,16 +2,29 @@ package com.chettergames.checkers;
 
 public abstract class Player 
 {
-	public Player(Game game, int number, Piece piece)
+	public Player(Game game, int number, Piece piece, Board board)
 	{
 		this.game = game;
 		this.number = number;
 		this.piece = piece;
+		this.board = board;
+		name = null;
 	}
 	
-	public abstract void prepareForNewGame();
+	public void prepareForNewGame() 
+	{
+		new Thread(new Runnable(){
+			@Override
+			public void run()
+			{
+				promptForName();
+			}
+		}).start();
+	}
+	
 	public abstract void promptForName();
 	public abstract void myTurn();
+	public abstract boolean isReady();
 	
 	public abstract void youWon(String otherPlayer);
 	public abstract void youLost(String otherPlayer);
@@ -25,4 +38,5 @@ public abstract class Player
 	protected String name;
 	protected int number;
 	protected Piece piece;
+	protected Board board;
 }

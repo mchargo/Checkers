@@ -8,17 +8,25 @@ public class Game
 	{
 		board = new Board();
 		this.newBoard();
-		player1 = new HumanPlayer(this, 1, new Piece(false, false));
-		player1.prepareForNewGame();
-		player2 = new HumanPlayer(this, 2, new Piece(true, false));
-		player2.prepareForNewGame();
-		board.printBoard();
+		CheckersUI ui = new CheckersUI(board);
+		player1 = new HumanPlayer(this, 1, new Piece(false, false), board, ui);
+		player1.promptForName();
+		player2 = new HumanPlayer(this, 2, new Piece(true, false), board, ui);
+		player2.promptForName();
 	}
 	
 	public void readyPlayers()
 	{
-		player1.promptForName();
-		player2.promptForName();
+		player1.prepareForNewGame();
+		player2.prepareForNewGame();
+		
+		while(!player1.isReady() || !player2.isReady())
+		{
+			try
+			{
+				Thread.sleep(100);
+			}catch(Exception e){}
+		}
 	}
 
 	public boolean checkForWin()
@@ -124,16 +132,30 @@ public class Game
 		}
 	}
 
-	public static int MOVE_VALID 			= 0;
-	public static int MOVE_INVALID 			= 1;
-	public static int MOVE_VALID_GO_AGAIN 	= 2;
+	public static final int MOVE_VALID 			= 0;
+	public static final int MOVE_INVALID 			= 1;
+	public static final int MOVE_VALID_GO_AGAIN 	= 2;
 
 	public int move(int row1, int col1, int row2, int col2)
 	{ 
 		if(wasMove(row1, col1, row2, col2))
 		{
+			board.placePiece(row2, col2, board.getPiece(row1, col1));
+			board.placePiece(row1, col1, null);
+			
 			return MOVE_VALID;
 		}else if(wasJump(row1, col1, row2, col2)){
+			
+			int rowDistance=row2-row1;
+			int colDistance=col2-col1;
+			int middleRow=rowDistance/2+row1;
+			int middleCol=colDistance/2+col1;
+			
+			board.placePiece(row2, col2, board.getPiece(row1, col1));
+			board.placePiece(row1, col1, null);
+			board.placePiece(middleRow, middleCol, null);
+			
+			
 			if(canDoMoreJumps(row2, col2))
 			{
 				return MOVE_VALID_GO_AGAIN;
@@ -283,13 +305,9 @@ public class Game
 
 	public static void main(String[] args) 
 	{
-		CheckersUI checkers = new CheckersUI(new Board());
-		
-		return;
-		/*
 		Game game = new Game();
 		game.newHumanVSHuman();
 		game.readyPlayers();
-		game.postGame();*/
+		game.postGame();
 	}
 }
