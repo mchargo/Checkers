@@ -3,9 +3,9 @@ import java.util.*;
 
 public class HumanPlayer extends Player 
 {
-	public HumanPlayer(Game game, int number) 
+	public HumanPlayer(Game game, int number, int piece) 
 	{
-		super(game, number);
+		super(game, number, piece);
 	}
 
 	@Override

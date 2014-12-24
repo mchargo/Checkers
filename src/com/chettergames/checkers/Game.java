@@ -7,8 +7,8 @@ public class Game
 	public void newHumanVSHuman()
 	{
 		board = new Board();
-		player1 = new HumanPlayer(this, 1);
-		player2 = new HumanPlayer(this, 2);
+		player1 = new HumanPlayer(this, 1, Piece.BLACK);
+		player2 = new HumanPlayer(this, 2, Piece.RED);
 	}
 	
 	public static final int NO_WIN = 0;
