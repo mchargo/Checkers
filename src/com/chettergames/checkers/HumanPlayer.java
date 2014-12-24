@@ -1,9 +1,8 @@
 package com.chettergames.checkers;
-import java.util.*;
 
 public class HumanPlayer extends Player 
 {
-	public HumanPlayer(Game game, int number, int piece) 
+	public HumanPlayer(Game game, int number, Piece piece) 
 	{
 		super(game, number, piece);
 	}

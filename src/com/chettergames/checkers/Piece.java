@@ -2,9 +2,19 @@ package com.chettergames.checkers;
 
 public class Piece 
 {
-	public static final int NONE 		= 0;
-	public static final int RED 		= 1;
-	public static final int RED_KING 	= 2;
-	public static final int BLACK 		= 3;
-	public static final int BLACK_KING 	= 4;
+	public Piece(boolean isRed, boolean isKing)
+	{
+		this.isRed = isRed;
+		this.isKing = isKing;
+	}
+	
+	public boolean isRed() {
+		return isRed;
+	}
+	public boolean isKing() {
+		return isKing;
+	}
+
+	private boolean isRed;
+	private boolean isKing;
 }
