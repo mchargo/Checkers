@@ -83,7 +83,12 @@ public class Game
 		return MOVE_VALID;
 	}
 	public boolean wasJump(int row1, int col1, int row2, int col2)
-	{
+	{	
+		int currentPiece=currentPlayer.getPiece();
+		int startLocation=board.getPiece(row1, col1);
+		int endLocation=board.getPiece(row2, col2);
+		
+		
 		return true; 
 	}
 	public boolean canDoMoreJumps(int row, int col)
