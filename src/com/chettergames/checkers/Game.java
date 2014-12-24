@@ -7,15 +7,13 @@ public class Game
 	public void newHumanVSHuman()
 	{
 		board = new Board();
+		this.newBoard();
 		player1 = new HumanPlayer(this, 1, new Piece(false, false));
 		player2 = new HumanPlayer(this, 2, new Piece(true, false));
+		board.printBoard();
 	}
 
-	public static final int NO_WIN = 0;
-	public static final int RED_WIN = 1;
-	public static final int BLACK_WIN = 2;
-
-	public int checkForWin()
+	public boolean checkForWin()
 	{
 		boolean blackFound=false;
 		boolean redFound=false;
@@ -23,13 +21,16 @@ public class Game
 		{
 			for(int col=0; col<8; col++)
 			{
-
-				int piece = board.getPiece(row, col);
-				if(piece==Piece.RED||piece==Piece.RED_KING)
+				Piece piece = board.getPiece(row, col);
+				if(piece==null)
+				{
+					continue;
+				}
+				if(piece.isRed())
 				{
 					redFound=true;
 				}
-				if(piece==Piece.BLACK||piece==Piece.BLACK_KING)
+				if(!piece.isRed())
 				{
 					blackFound=true;
 				}
@@ -45,13 +46,39 @@ public class Game
 		}
 		if(redFound&&blackFound)
 		{
-			return NO_WIN;
-		}else if(redFound&&!blackFound){
-			return RED_WIN;
-		}else if(!redFound&&blackFound){
-			return BLACK_WIN;
+			return false;
+		}else if(redFound){
+			return currentPlayer.getPiece().isRed();
+		}else if(blackFound){
+			return !currentPlayer.getPiece().isRed();
 		}
-		return 0;
+		
+		throw new RuntimeException("Illegal state exception");
+	}
+
+	public void newBoard()
+	{
+		for(int row=0; row<3; row++)
+		{
+			for(int col=0; col<8; col++)
+			{
+				if(board.isBlack(row, col))
+				{
+					board.placePiece(row, col, new Piece(true, false));
+				}
+			}
+		}
+		for(int row=5; row<8; row++)
+		{
+			for(int col=0; col<8; col++)
+			{
+				if(board.isBlack(row, col))
+				{
+					board.placePiece(row, col, new Piece(false, false));
+				}
+			}
+		}
+
 	}
 
 	public void postGame()
@@ -62,37 +89,180 @@ public class Game
 			{
 				playGame();
 			}
-		});
+		}).start();
 	}
 
 	public void playGame()
 	{
-		boolean playing = true;
-
-		while(playing)
+		while(true)
 		{
-
+			currentPlayer=player1;
+			player1.myTurn();
+			if(checkForWin())
+			{
+				player1.youWon(player2.getName());
+				player2.youLost(player1.getName());
+				break;
+			}
+			
+			currentPlayer=player2;
+			player2.myTurn();
+			if(checkForWin())
+			{
+				player2.youWon(player1.getName());
+				player1.youLost(player2.getName());
+				break;
+			}
 		}
 	}
 
 	public static int MOVE_VALID 			= 0;
 	public static int MOVE_INVALID 			= 1;
 	public static int MOVE_VALID_GO_AGAIN 	= 2;
+
 	public int move(int row1, int col1, int row2, int col2)
 	{ 
-		return MOVE_VALID;
+		if(wasMove(row1, col1, row2, col2))
+		{
+			return MOVE_VALID;
+		}else if(wasJump(row1, col1, row2, col2)){
+			if(canDoMoreJumps(row2, col2))
+			{
+				return MOVE_VALID_GO_AGAIN;
+			}else{
+				return MOVE_VALID;
+			}
+		} else {
+			return MOVE_INVALID;
+		}
 	}
-	public boolean wasJump(int row1, int col1, int row2, int col2)
-	{	
-		int currentPiece=currentPlayer.getPiece();
-		int startLocation=board.getPiece(row1, col1);
-		int endLocation=board.getPiece(row2, col2);
-		
-		
+	
+	public boolean wasMove(int row1, int col1, int row2, int col2)
+	{
+		if(!(row1>=0&&row1<=7)||!(col1>=0&&col1<=7)||!(row2>=0&&row2<=7)||!(col2>=0&&col2<=7))
+		{
+			return false;
+		}
+		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
+		boolean currentPieceIsKing=currentPlayer.getPiece().isKing();
+		if(board.getPiece(row1, col1)==null||!(board.getPiece(row2, col2)==null))
+		{
+			return false;
+		}
+
+		int rowDistance=row2-row1;
+		int colDistance=col2-col1;
+		int rowLength=Math.abs(rowDistance);
+		int colLength=Math.abs(colDistance);
+		if(rowLength!=1||colLength!=1)
+		{
+			return false;
+		}
+
+		if(!currentPieceIsKing)
+		{
+			if(currentPieceIsRed)
+			{
+				if(rowDistance<0)
+				{
+					return false;
+				}
+			}else{
+				if(rowDistance>0)
+				{
+					return false;
+				}
+			}
+		}
+		if(currentPieceIsRed!=board.getPiece(row1, col1).isRed())
+		{
+			return false;
+		}
 		return true; 
 	}
+
+	public boolean wasJump(int row1, int col1, int row2, int col2)
+	{	
+		if(!(row1>=0&&row1<=7)||!(col1>=0&&col1<=7)||!(row2>=0&&row2<=7)||!(col2>=0&&col2<=7))
+		{
+			return false;
+		}
+		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
+		boolean currentPieceIsKing=currentPlayer.getPiece().isKing();
+		if(board.getPiece(row1, col1)==null||!(board.getPiece(row2, col2)==null))
+		{
+			return false;
+		}
+
+		int rowDistance=row2-row1;
+		int colDistance=col2-col1;
+		int rowLength=Math.abs(rowDistance);
+		int colLength=Math.abs(colDistance);
+		if(rowLength!=2||colLength!=2)
+		{
+			return false;
+		}
+
+		if(!currentPieceIsKing)
+		{
+			if(currentPieceIsRed)
+			{
+				if(rowDistance<0)
+				{
+					return false;
+				}
+			}else{
+				if(rowDistance>0)
+				{
+					return false;
+				}
+			}
+		}
+
+		int middleRow=rowDistance/2+row1;
+		int middleCol=colDistance/2+col1;
+		Piece middlePiece =board.getPiece(middleRow, middleCol);
+		if(middlePiece==null)
+		{
+			return false;
+		}
+		if(middlePiece.isRed()==currentPieceIsRed)
+		{
+			return false;
+		}
+		if(currentPieceIsRed!=board.getPiece(row1, col1).isRed())
+		{
+			return false;
+		}
+		return true; 
+	}
+
 	public boolean canDoMoreJumps(int row, int col)
 	{
+		int possibility1Row=row+2;
+		int possibility1Col=col+2;
+		int possibility2Row=possibility1Row;
+		int possibility2Col=col-2;
+		int possibility3Row=row-2;
+		int possibility3Col=possibility1Col;
+		int possibility4Row=possibility3Row;
+		int possibility4Col=possibility2Col;
+		if(wasJump(row, col, possibility1Row, possibility1Col))
+		{
+			return true;
+		}
+		if(wasJump(row, col, possibility2Row, possibility2Col))
+		{
+			return true;
+		}
+		if(wasJump(row, col, possibility3Row, possibility3Col))
+		{
+			return true;
+		}
+		if(wasJump(row, col, possibility4Row, possibility4Col))
+		{
+			return true;
+		}
 		return false;
 	}
 
@@ -112,6 +282,13 @@ public class Game
 
 	public static void main(String[] args) 
 	{
-
+		Game game = new Game();
+		game.newHumanVSHuman();
+		game.postGame();
+		
+		try{
+			Thread.sleep(1);
+		}catch(Exception e){}
+		System.exit(0);
 	}
 }

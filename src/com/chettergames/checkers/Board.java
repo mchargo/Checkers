@@ -17,6 +17,17 @@ public class Board
 		pieces[row][column] = piece;
 	}
 	
+	public boolean isBlack(int row, int col)
+	{
+		boolean rowIsOdd=row%2==1;
+		boolean colIsOdd=col%2==1;
+		if(rowIsOdd==colIsOdd)
+		{
+			return false;
+		}
+		return true;
+	}
+	
 	public void printBoard()
 	{
 		for(int row = 0;row < 8;row++)
@@ -32,9 +43,9 @@ public class Board
 				{
 					if(piece.isKing())
 					{
-						System.out.print("r");
-					}else{
 						System.out.print("R");
+					}else{
+						System.out.print("r");
 					}
 				}else{
 					if(piece.isKing())

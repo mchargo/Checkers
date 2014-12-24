@@ -16,7 +16,10 @@ public class HumanPlayer extends Player
 	}
 
 	@Override
-	public void myTurn() {}
+	public void myTurn() 
+	{
+		System.out.println(number + " My Turn");
+	}
 
 	@Override
 	public void youWon(String otherPlayer) {}
