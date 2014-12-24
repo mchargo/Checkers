@@ -1,24 +1,20 @@
 package com.chettergames.checkers;
 
-import java.util.Arrays;
-
 public class Board 
 {
 	public Board()
 	{
-		board = new int[8][8];
-		for(int x = 0;x < 8;x++)
-			Arrays.fill(board[x], Piece.NONE);
+		pieces = new Piece[8][8];
 	}
 	
-	public int getPiece(int row, int column)
+	public Piece getPiece(int row, int column)
 	{
-		return board[row][column];
+		return pieces[row][column];
 	}
 	
-	public void placePiece(int row, int column, int piece)
+	public void placePiece(int row, int column, Piece piece)
 	{
-		board[row][column] = piece;
+		pieces[row][column] = piece;
 	}
 	
 	public void printBoard()
@@ -28,23 +24,25 @@ public class Board
 			System.out.print("|");
 			for(int column = 0;column < 8;column++)
 			{
-				switch(board[row][column])
-				{
-				case Piece.NONE:
+				Piece piece = pieces[row][column];
+				
+				if(piece == null)
 					System.out.print(" ");
-					break;
-				case Piece.RED:
-					System.out.print("R");
-					break;
-				case Piece.BLACK:
-					System.out.print("B");
-					break;
-				case Piece.RED_KING:
-					System.out.print("r");
-					break;
-				case Piece.BLACK_KING:
-					System.out.print("b");
-					break;
+				else if(piece.isRed())
+				{
+					if(piece.isKing())
+					{
+						System.out.print("r");
+					}else{
+						System.out.print("R");
+					}
+				}else{
+					if(piece.isKing())
+					{
+						System.out.print("B");
+					}else{
+						System.out.print("b");
+					}
 				}
 				System.out.print("|");
 			}
@@ -52,5 +50,5 @@ public class Board
 		}
 	}
 	
-	public int board[][];
+	public Piece pieces[][];
 }
