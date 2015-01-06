@@ -1,4 +1,4 @@
-package com.chettergames.checkers.net;
+package com.chettergames.net;
 
 public class BufferBuilder 
 {

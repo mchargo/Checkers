@@ -1,4 +1,4 @@
-package com.chettergames.checkers.net;
+package com.chettergames.net;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -63,7 +63,6 @@ public class NetworkManager
 			Output.neterr(e);
 			connected = false;
 		}
-
 	}
 
 	private void listen()
