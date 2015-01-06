@@ -114,7 +114,7 @@ public class Game
 			}
 		}).start();
 	}
-
+	
 	public void playGame()
 	{
 		while(true)
@@ -139,7 +139,7 @@ public class Game
 		}
 	}
 
-	public static final int MOVE_VALID 			= 0;
+	public static final int MOVE_VALID 				= 0;
 	public static final int MOVE_INVALID 			= 1;
 	public static final int MOVE_VALID_GO_AGAIN 	= 2;
 
