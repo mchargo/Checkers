@@ -86,11 +86,18 @@ public class HumanPlayer extends Player
 	@Override
 	public void youWon(String otherPlayer) 
 	{
+<<<<<<< HEAD
 		
+=======
+		ui.println(name + " has won.");
+>>>>>>> 8c53801971c392e15aff1cca1644406154d1151f
 	}
 
 	@Override
-	public void youLost(String otherPlayer) {}
+	public void youLost(String otherPlayer) 
+	{
+		ui.println(name + " has lost.");
+	}
 
 	private CheckersUI ui;
 }
