@@ -4,12 +4,14 @@ import com.chettergames.checkers.Board;
 import com.chettergames.checkers.Game;
 import com.chettergames.checkers.Piece;
 import com.chettergames.checkers.Player;
+import com.chettergames.net.NetworkManager;
 
 public class NetworkPlayer extends Player
 {
-	public NetworkPlayer(Game game, int number, Piece piece, Board board) 
+	public NetworkPlayer(Game game, int number, Piece piece, Board board, NetworkManager network) 
 	{
 		super(game, number, piece, board);
+		this.network = network;
 	}
 
 	@Override
@@ -27,6 +29,8 @@ public class NetworkPlayer extends Player
 	@Override
 	public void youLost(String otherPlayer) {}
 	
+	private NetworkManager network;
+	
 	// Network Flags
 	
 	// From Server to Client
@@ -40,8 +44,10 @@ public class NetworkPlayer extends Player
 	public static final byte PLAYER_MOVE	= 6;  // the opponent has moved
 	public static final byte YOU_WON		= 7;
 	public static final byte YOU_LOST		= 8;
+	public static final byte YOUR_COLOR		= 9;
+	public static final byte YOUR_PLAYER	= 10;
 	
-	public static final byte PLAY_AGAIN		= 9;
+	public static final byte PLAY_AGAIN		= 11;
 	
 	// From Client to Server
 	public static final byte RECEIVE_NAME 	= 0;
