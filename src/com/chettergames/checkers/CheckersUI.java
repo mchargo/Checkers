@@ -90,6 +90,11 @@ public class CheckersUI implements WindowListener
 		field.requestFocus();
 	}
 
+	public void setBoard(Board board)
+	{
+		panel.board = board;
+	}
+	
 	@Override public void windowActivated(WindowEvent e) {}
 	@Override public void windowClosed(WindowEvent e){}
 	@Override public void windowDeactivated(WindowEvent e){}
