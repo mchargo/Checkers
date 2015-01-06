@@ -62,7 +62,12 @@ public class Client implements NetworkListener
 		ui.prompt();
 		if(ui.prompt())
 		{
-			
+			Client client = new Client(ui);
+		}else{
+			Game game = new Game(ui);
+			game.newHumanVSHuman();
+			game.readyPlayers();
+			game.postGame();
 		}
 		
 	}
