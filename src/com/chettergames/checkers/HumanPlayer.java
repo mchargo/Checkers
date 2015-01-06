@@ -84,7 +84,10 @@ public class HumanPlayer extends Player
 	}
 
 	@Override
-	public void youWon(String otherPlayer) {}
+	public void youWon(String otherPlayer) 
+	{
+		
+	}
 
 	@Override
 	public void youLost(String otherPlayer) {}
