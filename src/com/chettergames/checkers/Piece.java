@@ -14,6 +14,9 @@ public class Piece
 	public boolean isKing() {
 		return isKing;
 	}
+	public void kingMe(){
+		isKing = true;
+	}
 
 	private boolean isRed;
 	private boolean isKing;

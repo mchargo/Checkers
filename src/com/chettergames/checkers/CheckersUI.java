@@ -303,8 +303,14 @@ public class CheckersUI implements WindowListener
 
 						if(piece == null) continue;
 						if(piece.isRed())
+						{
 							g2.drawImage(lightChecker, x, y, (int)squareSize, (int)squareSize, null);
-						else g2.drawImage(darkChecker, x, y, (int)squareSize, (int)squareSize, null);
+						}else {
+							g2.drawImage(darkChecker, x, y, (int)squareSize, (int)squareSize, null);
+						}
+						
+						if(piece.isKing()) 
+							g2.drawImage(king, x, y - 2, (int)squareSize, (int)squareSize, null);
 					}
 					
 					if(active && activeRow == row && activeCol == col)
@@ -324,8 +330,7 @@ public class CheckersUI implements WindowListener
 				File lightCheckerFile = new File("img/light-checker.png");
 				File darkSquareFile = new File("img/dark-square.png");
 				File lightSquareFile = new File("img/light-square.png");
-
-				System.out.println(darkCheckerFile.getAbsolutePath());
+				File kingFile = new File("img/king.png");
 
 				try
 				{
@@ -333,6 +338,7 @@ public class CheckersUI implements WindowListener
 					lightChecker = ImageIO.read(lightCheckerFile);
 					darkSquare = ImageIO.read(darkSquareFile);
 					lightSquare = ImageIO.read(lightSquareFile);
+					king = ImageIO.read(kingFile);
 				}catch(Exception e)
 				{
 					System.out.println("Could not load images.");
@@ -342,6 +348,7 @@ public class CheckersUI implements WindowListener
 				lightCheckerFile = null;
 				darkSquareFile = null;
 				lightSquareFile = null;
+				kingFile = null;
 				loaded = true;
 			}
 		}
@@ -384,7 +391,6 @@ public class CheckersUI implements WindowListener
 						{
 							Thread.sleep(1000 / vsync);
 							CheckersPanel.this.repaint();
-							System.out.println("repainting");
 						}catch(Exception e){}
 					}
 					
@@ -421,9 +427,10 @@ public class CheckersUI implements WindowListener
 
 		private BufferedImage darkChecker;
 		private BufferedImage lightChecker;
-
 		private BufferedImage darkSquare;
 		private BufferedImage lightSquare;
+		private BufferedImage king;
+		
 		private Board board;
 		private boolean loaded;
 		private float squareSize;

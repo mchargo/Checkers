@@ -140,11 +140,19 @@ public class Game
 	{ 
 		if(wasMove(row1, col1, row2, col2))
 		{
+			Piece piece = board.getPiece(row1, col1);
 			board.placePiece(row2, col2, board.getPiece(row1, col1));
 			board.placePiece(row1, col1, null);
 			
+			if(piece.isRed() && row2 == 7)
+				piece.kingMe();
+			else if(!piece.isRed() && row2 == 0)
+				piece.kingMe();
+			
 			return MOVE_VALID;
 		}else if(wasJump(row1, col1, row2, col2)){
+			
+			Piece piece = board.getPiece(row1, col1);
 			
 			int rowDistance=row2-row1;
 			int colDistance=col2-col1;
@@ -154,6 +162,11 @@ public class Game
 			board.placePiece(row2, col2, board.getPiece(row1, col1));
 			board.placePiece(row1, col1, null);
 			board.placePiece(middleRow, middleCol, null);
+			
+			if(piece.isRed() && row2 == 7)
+				piece.kingMe();
+			else if(!piece.isRed() && row2 == 0)
+				piece.kingMe();
 			
 			
 			if(canDoMoreJumps(row2, col2))
@@ -173,12 +186,11 @@ public class Game
 		{
 			return false;
 		}
-		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
-		boolean currentPieceIsKing=currentPlayer.getPiece().isKing();
 		if(board.getPiece(row1, col1)==null||!(board.getPiece(row2, col2)==null))
-		{
 			return false;
-		}
+		
+		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
+		boolean currentPieceIsKing=board.getPiece(row1, col1).isKing();
 
 		int rowDistance=row2-row1;
 		int colDistance=col2-col1;
@@ -217,12 +229,11 @@ public class Game
 		{
 			return false;
 		}
-		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
-		boolean currentPieceIsKing=currentPlayer.getPiece().isKing();
 		if(board.getPiece(row1, col1)==null||!(board.getPiece(row2, col2)==null))
-		{
 			return false;
-		}
+		
+		boolean currentPieceIsRed=currentPlayer.getPiece().isRed();
+		boolean currentPieceIsKing=board.getPiece(row1, col1).isKing();
 
 		int rowDistance=row2-row1;
 		int colDistance=col2-col1;
