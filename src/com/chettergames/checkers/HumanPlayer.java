@@ -1,7 +1,6 @@
 package com.chettergames.checkers;
 
 import java.awt.Point;
-import java.awt.Window;
 
 public class HumanPlayer extends Player 
 {
@@ -86,11 +85,7 @@ public class HumanPlayer extends Player
 	@Override
 	public void youWon(String otherPlayer) 
 	{
-<<<<<<< HEAD
-		
-=======
 		ui.println(name + " has won.");
->>>>>>> 8c53801971c392e15aff1cca1644406154d1151f
 	}
 
 	@Override
