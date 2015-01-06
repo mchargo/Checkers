@@ -21,7 +21,12 @@ public class Client implements NetworkListener
 	{
 		Board board = new Board();
 		CheckersUI ui = new CheckersUI(board);
-		
+		ui.print("Play on the line? ");
+		ui.prompt();
+		if(ui.prompt())
+		{
+			
+		}
 		
 	}
 
