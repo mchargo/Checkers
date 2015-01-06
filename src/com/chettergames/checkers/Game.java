@@ -1,9 +1,16 @@
 package com.chettergames.checkers;
 
+import com.chettergames.net.NetworkManager;
+
 public class Game 
 {
 	public Game(){}
 
+	public void newNetworkVsNetwork(NetworkManager player1, NetworkManager player2)
+	{
+		
+	}
+	
 	public void newHumanVSHuman()
 	{
 		board = new Board();
