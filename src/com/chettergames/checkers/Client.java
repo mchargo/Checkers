@@ -7,7 +7,7 @@ public class Client implements NetworkListener
 {
 	public Client(CheckersUI ui)
 	{
-		
+		this.ui = ui;
 	}
 	
 	@Override
@@ -22,6 +22,14 @@ public class Client implements NetworkListener
 		case REQUEST_MOVE:
 			break;
 		case WAS_KINGED:
+			break;
+		case PLAYER_MOVE:
+			break;
+		case YOU_WON:
+			break;
+		case YOU_LOST:
+			break;
+		case YOUR_PLAYER:
 			break;
 		}
 	}
@@ -69,8 +77,5 @@ public class Client implements NetworkListener
 			game.readyPlayers();
 			game.postGame();
 		}
-		
 	}
-
-
 }
