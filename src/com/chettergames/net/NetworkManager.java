@@ -125,7 +125,12 @@ public class NetworkManager
 		Output.netok();
 	}
 
-	public void sendData(byte[] buffer)
+	/** 
+	 * Send a message across the stream.
+	 * @param buffer The buffer to send.
+	 * @return Whether or not the message was sent.
+	 */
+	public boolean sendData(byte[] buffer)
 	{
 		Output.net("Buffer length: " + buffer.length);
 		Output.net("Sending buffer...\t\t\t");
@@ -133,7 +138,7 @@ public class NetworkManager
 		{
 			Output.netfail();
 			Output.netln("Not connected to host.");
-			return;
+			return false;
 		}
 		
 		try
@@ -148,7 +153,11 @@ public class NetworkManager
 			Output.netln("Broken Connection");
 			e.printStackTrace();
 			connected = false;
+			
+			return false;
 		}
+		
+		return true;
 	}
 	
 	public void messageNotUsed(byte[] message)

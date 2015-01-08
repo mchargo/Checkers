@@ -2,6 +2,7 @@ package com.chettergames.checkers;
 
 import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkManager;
+import com.chettergames.net.Output;
 
 public class NetworkPlayer extends Player
 {
@@ -21,27 +22,30 @@ public class NetworkPlayer extends Player
 	@Override
 	public void promptForName() 
 	{
-		network.sendData(new byte[]{REQUEST_NAME});
-
-		BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
-
-		// get the name from the buffer
-		if(builder.pullFlag() == RECEIVE_NAME)
+		try
 		{
+			network.sendData(new byte[]{REQUEST_NAME});
+
+			byte[] data = network.blockForFlags(new byte[]{RECEIVE_NAME});
+			BufferBuilder builder = new BufferBuilder(data, 0);
+
+			// get the name from the buffer
 			name = builder.pullString();
-		} else promptForName();
+		}catch(Exception e){Output.neterr(e);}
 	}
 
 	@Override
 	public void myTurn() 
 	{
-		network.sendData(new byte[]{REQUEST_MOVE});
-		boolean currentTurn = true;
-		while(currentTurn)
+		try
 		{
-			BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
-			if(builder.pullFlag() == RECEIVE_MOVE)
+			network.sendData(new byte[]{REQUEST_MOVE});
+			boolean currentTurn = true;
+			while(currentTurn)
 			{
+				byte[] data = network.blockForFlags(new byte[]{RECEIVE_MOVE});
+				BufferBuilder builder = new BufferBuilder(data, 0);
+
 				int row1 = builder.pullInt();
 				int col1 = builder.pullInt();
 				int row2 = builder.pullInt();
@@ -60,56 +64,61 @@ public class NetworkPlayer extends Player
 					currentTurn = false;
 					return;
 				}
-
-
-			} else myTurn();
-		}
+			}
+		}catch(Exception e){Output.neterr(e);}
 	}
 
 	@Override
 	public void youWon(String otherPlayer) 
 	{
-		network.sendData(new byte[]{YOU_WON});
-		
-		byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
-		
-		if(message[0] == PLAY_AGAIN)
+		try
 		{
-			// I want to play again
-		}else{
-			// I dont want to play again
-		}
+			network.sendData(new byte[]{YOU_WON});
+			byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
+
+			if(message[0] == LETS_PLAY_AGAIN)
+			{
+				// I want to play again
+			}else{
+				// I dont want to play again
+			}
+		}catch(Exception e){Output.neterr(e);}
 	}
 
 	@Override
 	public void youLost(String otherPlayer) 
 	{
-		network.sendData(new byte[]{YOU_LOST});
-		
-		byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
-		
-		if(message[0] == PLAY_AGAIN)
+		try
 		{
-			// I want to play again
-		}else{
-			// I dont want to play again
-		}
+			network.sendData(new byte[]{YOU_LOST});
+			byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
+
+			if(message[0] == LETS_PLAY_AGAIN)
+			{
+				// I want to play again
+			}else{
+				// I dont want to play again
+			}
+		}catch(Exception e){Output.neterr(e);}
 	}
-	
+
 	public void moveWasMade(int row1, int col1, int row2, int col2)
 	{
-		BufferBuilder buffer = new BufferBuilder(1 + 4 + 4 + 4 + 4);
-		buffer.pushFlag(PLAYER_MOVE);
-		buffer.pushInt(row1);
-		buffer.pushInt(col1);
-		buffer.pushInt(row2);
-		buffer.pushInt(col2);
-		network.sendData(buffer.getBuffer());
+		try
+		{
+			BufferBuilder buffer = new BufferBuilder(1 + 4 + 4 + 4 + 4);
+			buffer.pushFlag(PLAYER_MOVE);
+			buffer.pushInt(row1);
+			buffer.pushInt(col1);
+			buffer.pushInt(row2);
+			buffer.pushInt(col2);
+			network.sendData(buffer.getBuffer());
+		}catch(Exception e){Output.neterr(e);}
 	}
-	
+
 	public void pieceWasKinged(int row, int col)
 	{
-		
+
 	}
 
 	private NetworkManager network;

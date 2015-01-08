@@ -212,7 +212,7 @@ public class Client implements NetworkListener
 		ui.print("Play on the line? ");
 		if(ui.prompt())
 		{
-			String address = "localhost";
+			String address = "192.168.2.3";
 			int port = 10000;
 
 			NetworkManager manager = new NetworkManager(address, port);
