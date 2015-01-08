@@ -18,6 +18,8 @@ public class Client implements NetworkListener
 		switch(builder.pullFlag())
 		{
 		case REQUEST_NAME:
+			ui.print("What is your name? ");
+			ui.nextLine();
 			break;
 		case REQUEST_MOVE:
 			break;
