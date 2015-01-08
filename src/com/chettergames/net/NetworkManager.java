@@ -151,6 +151,12 @@ public class NetworkManager
 		}
 	}
 	
+	public void messageNotUsed(byte[] message)
+	{
+		if(listener != null)
+			listener.messageReceived(message);
+	}
+	
 	public synchronized byte[] blockForMessage()
 	{
 		while(blocking) try{Thread.sleep(1000);}catch(Exception e){}
