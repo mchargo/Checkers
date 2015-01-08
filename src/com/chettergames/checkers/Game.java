@@ -1,6 +1,5 @@
 package com.chettergames.checkers;
 
-import com.chettergames.checkers.matchmaking.NetworkPlayer;
 import com.chettergames.net.NetworkManager;
 
 public class Game 
@@ -155,10 +154,21 @@ public class Game
 			board.placePiece(row2, col2, board.getPiece(row1, col1));
 			board.placePiece(row1, col1, null);
 			
+			player1.moveWasMade(row1, col1, row2, col2);
+			player2.moveWasMade(row1, col1, row2, col2);
+			
 			if(piece.isRed() && row2 == 7)
+			{
 				piece.kingMe();
+				player1.pieceWasKinged(row2, col2);
+				player2.pieceWasKinged(row2, col2);
+			}
 			else if(!piece.isRed() && row2 == 0)
+			{
 				piece.kingMe();
+				player1.pieceWasKinged(row2, col2);
+				player2.pieceWasKinged(row2, col2);
+			}
 			
 			return MOVE_VALID;
 		}else if(wasJump(row1, col1, row2, col2)){
@@ -174,11 +184,21 @@ public class Game
 			board.placePiece(row1, col1, null);
 			board.placePiece(middleRow, middleCol, null);
 			
-			if(piece.isRed() && row2 == 7)
-				piece.kingMe();
-			else if(!piece.isRed() && row2 == 0)
-				piece.kingMe();
+			player1.moveWasMade(row1, col1, row2, col2);
+			player2.moveWasMade(row1, col1, row2, col2);
 			
+			if(piece.isRed() && row2 == 7)
+			{
+				piece.kingMe();
+				player1.pieceWasKinged(row2, col2);
+				player2.pieceWasKinged(row2, col2);
+			}
+			else if(!piece.isRed() && row2 == 0)
+			{
+				piece.kingMe();
+				player1.pieceWasKinged(row2, col2);
+				player2.pieceWasKinged(row2, col2);
+			}
 			
 			if(canDoMoreJumps(row2, col2))
 			{

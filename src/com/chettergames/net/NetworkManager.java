@@ -157,6 +157,19 @@ public class NetworkManager
 			listener.messageReceived(message);
 	}
 	
+	public synchronized byte[] blockForFlags(byte[] flags)
+	{
+		while(true)
+		{
+			byte[] buffer = blockForMessage();
+			
+			for(byte b : flags)
+				if(buffer[0] == b)
+					return buffer;
+			messageNotUsed(buffer);
+		}
+	}
+	
 	public synchronized byte[] blockForMessage()
 	{
 		while(blocking) try{Thread.sleep(1000);}catch(Exception e){}

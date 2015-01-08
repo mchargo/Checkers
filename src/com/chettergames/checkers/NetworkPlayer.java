@@ -1,7 +1,5 @@
 package com.chettergames.checkers;
 
-import java.awt.Point;
-
 import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkManager;
 
@@ -51,13 +49,31 @@ public class NetworkPlayer extends Player
 	@Override
 	public void youWon(String otherPlayer) 
 	{
-		//ui.println(name + " has won.");
+		network.sendData(new byte[]{YOU_WON});
+		
+		byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
+		
+		if(message[0] == PLAY_AGAIN)
+		{
+			// I want to play again
+		}else{
+			// I dont want to play again
+		}
 	}
 
 	@Override
 	public void youLost(String otherPlayer) 
 	{
-		//ui.println(name + " has lost.");
+		network.sendData(new byte[]{YOU_LOST});
+		
+		byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
+		
+		if(message[0] == PLAY_AGAIN)
+		{
+			// I want to play again
+		}else{
+			// I dont want to play again
+		}
 	}
 	
 	private NetworkManager network;
