@@ -143,7 +143,7 @@ public class NetworkManager
 		
 		try
 		{
-			out.write(buffer.length);
+			out.writeInt(buffer.length);
 			out.write(buffer);
 			out.flush();
 			Output.netok();
