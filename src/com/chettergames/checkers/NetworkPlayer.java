@@ -47,12 +47,13 @@ public class NetworkPlayer extends Player
 			while(currentTurn)
 			{
 				byte[] data = network.blockForFlags(new byte[]{RECEIVE_MOVE});
-				BufferBuilder builder = new BufferBuilder(data, 0);
+				BufferBuilder builder = new BufferBuilder(data, 1);
 
 				int row1 = builder.pullInt();
 				int col1 = builder.pullInt();
 				int row2 = builder.pullInt();
 				int col2 = builder.pullInt();
+				
 				int result = game.move(row1, col1, row2, col2);
 				switch(result)
 				{

@@ -109,6 +109,12 @@ public class NetworkManager
 							Output.netln("Blocker got message");
 							blockData = buffer;
 							latch.countDown();
+							
+							while(blockData != null)
+							{
+								Thread.sleep(100);
+								Output.netln("Waiting for block to end...");
+							}
 						}else{
 							if(listener != null)
 							{
@@ -188,7 +194,7 @@ public class NetworkManager
 	public void messageNotUsed(byte[] message)
 	{
 		if(listener != null)
-			listener.messageReceived(message);
+			postMessageToListener(message);
 	}
 
 	public byte[] blockForFlags(byte[] flags)
@@ -198,15 +204,29 @@ public class NetworkManager
 			byte[] buffer = blockForMessage();
 
 			for(byte b : flags)
+			{
 				if(buffer[0] == b)
+				{
+					System.out.println("We were looking for " + buffer[0] + ", we found " + b);
 					return buffer;
+				}
+			}
+
+			System.out.println("Passed to listener.");
 			messageNotUsed(buffer);
 		}
 	}
 
-	public synchronized byte[] blockForMessage()
+	private synchronized byte[] blockForMessage()
 	{
-		while(blocking) try{Thread.sleep(100);}catch(Exception e){}
+		while(blocking) 
+		{
+			try
+			{
+				Thread.sleep(100);
+				Output.netln("ALREADY BLOCKING!!");
+			}catch(Exception e){}
+		}
 
 		blocking = true;
 
@@ -220,11 +240,15 @@ public class NetworkManager
 		}catch(Exception e)
 		{
 			Output.netfail();
+			Output.neterr(e);
 		}
 
+		
+		byte[] data = blockData;
+		blockData = null;
 		blocking = false;
 
-		return blockData;
+		return data;
 	}
 
 	private NetworkListener listener;
