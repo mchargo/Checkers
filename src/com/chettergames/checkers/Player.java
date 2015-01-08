@@ -9,6 +9,7 @@ public abstract class Player
 		this.piece = piece;
 		this.board = board;
 		name = null;
+		playAgain = false;
 	}
 	
 	public void prepareForNewGame() 
@@ -31,6 +32,7 @@ public abstract class Player
 	public abstract void youLost(String otherPlayer);
 	public abstract void boardWasReset();
 	
+	public boolean playAgain(){return playAgain;}
 	public void moveWasMade(int row1, int col1, int row2, int col2){}
 	public void pieceWasKinged(int row, int col){}
 	public String getName(){return name;}
@@ -43,4 +45,5 @@ public abstract class Player
 	protected int number;
 	protected Piece piece;
 	protected Board board;
+	protected boolean playAgain;
 }

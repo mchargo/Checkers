@@ -127,6 +127,7 @@ public class Game
 			{
 				player1.youWon(player2.getName());
 				player2.youLost(player1.getName());
+				playAgain();
 				break;
 			}
 			
@@ -136,9 +137,30 @@ public class Game
 			{
 				player2.youWon(player1.getName());
 				player1.youLost(player2.getName());
+				playAgain();
 				break;
 			}
 		}
+	}
+	
+	private void playAgain()
+	{
+		try
+		{
+			for(int count = 0;count < 10;count++)
+			{
+				Thread.sleep(1000);
+				
+				if(player1.playAgain &&
+						player2.playAgain)
+				{
+					NetworkManager p1 = ((NetworkPlayer)player1).getNetwork();
+					NetworkManager p2 = ((NetworkPlayer)player2).getNetwork();
+					newNetworkVsNetwork(p1, p2);
+					break;
+				}
+			}
+		}catch(Exception e){}
 	}
 
 	public static final int MOVE_VALID 				= 0;

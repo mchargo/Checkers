@@ -18,6 +18,11 @@ public class NetworkPlayer extends Player
 	{
 		return name != null;
 	}
+	
+	public NetworkManager getNetwork()
+	{
+		return network;
+	}
 
 	@Override
 	public void promptForName() 
@@ -92,18 +97,25 @@ public class NetworkPlayer extends Player
 	@Override
 	public void youLost(String otherPlayer) 
 	{
-		try
+		new Thread(new Runnable()
 		{
-			network.sendData(new byte[]{YOU_LOST});
-			byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
-
-			if(message[0] == LETS_PLAY_AGAIN)
+			public void run()
 			{
-				// I want to play again
-			}else{
-				// I dont want to play again
+				try
+				{
+					playAgain = false;
+					network.sendData(new byte[]{YOU_LOST});
+					byte[] message = network.blockForFlags(new byte[]{LETS_PLAY_AGAIN, DONT_PLAY_AGAIN});
+
+					if(message[0] == LETS_PLAY_AGAIN)
+					{
+						playAgain = true;
+					}else{
+						playAgain = false;
+					}
+				}catch(Exception e){Output.neterr(e);}
 			}
-		}catch(Exception e){Output.neterr(e);}
+		}).start();
 	}
 
 	public void moveWasMade(int row1, int col1, int row2, int col2)

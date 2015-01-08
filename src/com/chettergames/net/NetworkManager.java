@@ -20,7 +20,7 @@ public class NetworkManager
 		connected = false;
 		blocking = false;
 	}
-
+	
 	/**
 	 * Create a NetworkManager with an already
 	 * existing socket
