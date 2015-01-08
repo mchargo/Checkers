@@ -19,7 +19,7 @@ public class Client implements NetworkListener
 		{
 		case REQUEST_NAME:
 			ui.print("What is your name? ");
-			ui.nextLine();
+			name= ui.nextLine();
 			break;
 		case REQUEST_MOVE:
 			break;
@@ -35,7 +35,8 @@ public class Client implements NetworkListener
 			break;
 		}
 	}
-	
+	private String name;
+	private int playerNumber;
 	private CheckersUI ui;
 	
 	// Network Flags
