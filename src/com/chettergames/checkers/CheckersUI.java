@@ -254,6 +254,7 @@ public class CheckersUI implements WindowListener
 	}
 
 	public Point getActive()
+	
 	{
 		if(panel.active)
 			return new Point(panel.activeRow, panel.activeCol);

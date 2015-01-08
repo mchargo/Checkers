@@ -15,13 +15,13 @@ public class Client implements NetworkListener
 		this.network = network;
 		network.setNetworkListener(this);
 	}
-	
+
 	public void clearBoard()
 	{
 		ui.setBoard(new Board());
 		board = ui.getBoard();
 	}
-	
+
 	public void newBoard()
 	{
 		for(int row=0; row<3; row++)
@@ -47,7 +47,7 @@ public class Client implements NetworkListener
 		case SETUP_BOARD: // the start of the game
 			newBoard();
 			break;
-			
+
 		case REQUEST_NAME: // request the player's name
 			ui.print("What is your name? ");
 			name= ui.nextLine();
@@ -58,7 +58,7 @@ public class Client implements NetworkListener
 			network.sendData(builder.getBuffer());
 			break;
 		case REQUEST_MOVE: // request the move from the player.
-			ui.println(name + ", is your turn.");
+			ui.println(name + ", it is your turn.");
 
 			ui.disableActive();
 			boolean selected = false;
@@ -85,7 +85,7 @@ public class Client implements NetworkListener
 						builder.pushInt(col1);
 						builder.pushInt(rowp);
 						builder.pushInt(colp);
-						
+
 						network.sendData(builder.getBuffer());
 
 						byte[] packet = network.blockForFlags(new byte[]{MOVE_VALID, MOVE_INVALID, MOVE_GO_AGAIN});
@@ -178,7 +178,7 @@ public class Client implements NetworkListener
 	private String name;
 	private CheckersUI ui;
 	private Board board;
-	
+
 	// Network Flags
 
 	// From Server to Client
