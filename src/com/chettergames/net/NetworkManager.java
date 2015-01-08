@@ -180,7 +180,7 @@ public class NetworkManager
 			listener.messageReceived(message);
 	}
 	
-	public synchronized byte[] blockForFlags(byte[] flags)
+	public byte[] blockForFlags(byte[] flags)
 	{
 		while(true)
 		{
@@ -195,7 +195,7 @@ public class NetworkManager
 	
 	public synchronized byte[] blockForMessage()
 	{
-		while(blocking) try{Thread.sleep(1000);}catch(Exception e){}
+		while(blocking) try{Thread.sleep(100);}catch(Exception e){}
 		
 		blocking = true;
 		
