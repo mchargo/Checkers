@@ -24,13 +24,13 @@ public class NetworkPlayer extends Player
 	public void promptForName() 
 	{
 		network.sendData(new byte[]{REQUEST_NAME});
-		
+
 		BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
-		
+
 		// get the name from the buffer
 		if(builder.pullFlag() == RECEIVE_NAME)
 		{
-			
+			name = builder.pullString();
 		} else promptForName();
 	}
 
@@ -38,14 +38,34 @@ public class NetworkPlayer extends Player
 	public void myTurn() 
 	{
 		network.sendData(new byte[]{REQUEST_MOVE});
-		
-		BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
-		
-		// get the name from the buffer
-		if(builder.pullFlag() == RECEIVE_MOVE)
+		boolean currentTurn = true;
+		while(currentTurn)
 		{
-			// parse row1, col1, row2, col2
-		} else promptForName();
+			BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
+			if(builder.pullFlag() == RECEIVE_MOVE)
+			{
+				int row1 = builder.pullInt();
+				int col1 = builder.pullInt();
+				int row2 = builder.pullInt();
+				int col2 = builder.pullInt();
+				int result = game.move(row1, col1, row2, col2);
+				switch(result)
+				{
+				case Game.MOVE_INVALID:
+					network.sendData(new byte[]{MOVE_INVALID});
+					break;
+				case Game.MOVE_VALID_GO_AGAIN:
+					network.sendData(new byte[]{MOVE_GO_AGAIN});
+					break;
+				case Game.MOVE_VALID:
+					network.sendData(new byte[]{MOVE_VALID});
+					currentTurn = false;
+					return;
+				}
+
+
+			} else myTurn();
+		}
 	}
 
 	@Override
@@ -59,9 +79,9 @@ public class NetworkPlayer extends Player
 	{
 		//ui.println(name + " has lost.");
 	}
-	
+
 	private NetworkManager network;
-	
+
 	// From Server to Client
 	public static final byte REQUEST_NAME 	= 0;
 	public static final byte REQUEST_MOVE 	= 1;
