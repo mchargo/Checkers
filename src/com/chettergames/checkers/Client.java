@@ -8,6 +8,7 @@ public class Client implements NetworkListener
 	public Client(CheckersUI ui)
 	{
 		this.ui = ui;
+		board = ui.getBoard();
 	}
 	
 	@Override
@@ -22,8 +23,14 @@ public class Client implements NetworkListener
 			ui.nextLine();
 			break;
 		case REQUEST_MOVE:
+			
+			// get the move from the player
+			
 			break;
 		case WAS_KINGED:
+			int rowKinged = builder.pullInt();
+			int colKinged = builder.pullInt();
+			
 			break;
 		case PLAYER_MOVE:
 			break;
@@ -36,7 +43,10 @@ public class Client implements NetworkListener
 		}
 	}
 	
+	private String name;
+	private int playerNumber;
 	private CheckersUI ui;
+	private Board board;
 	
 	// Network Flags
 	

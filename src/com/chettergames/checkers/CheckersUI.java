@@ -89,6 +89,11 @@ public class CheckersUI implements WindowListener
 
 		field.requestFocus();
 	}
+	
+	public Board getBoard()
+	{
+		return panel.board;
+	}
 
 	public void setBoard(Board board)
 	{

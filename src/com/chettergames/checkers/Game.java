@@ -5,23 +5,17 @@ import com.chettergames.net.NetworkManager;
 
 public class Game 
 {
-	public Game(CheckersUI ui)
-	{
-		this.ui = ui;
-	}
-
 	public void newNetworkVsNetwork(NetworkManager net1, NetworkManager net2)
 	{
 		board = new Board();
 		newBoard();
-		ui.setBoard(board);
 		player1 = new NetworkPlayer(this, 1, new Piece(false, false), board, net1);
 		player1.promptForName();
 		player2 = new NetworkPlayer(this, 2, new Piece(true, false), board, net2);
 		player2.promptForName();
 	}
 	
-	public void newHumanVSHuman()
+	public void newHumanVSHuman(CheckersUI ui)
 	{
 		board = new Board();
 		newBoard();
@@ -330,5 +324,4 @@ public class Game
 	private Player player2;
 	private Player currentPlayer;
 	private Board board;
-	private CheckersUI ui;
 }
