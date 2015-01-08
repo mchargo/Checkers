@@ -26,12 +26,19 @@ public class Client extends HumanPlayer implements NetworkListener
 			// get the move from the player
 			
 			break;
+		case ASSIGN_NUMBER:
+			playerNumber = builder.pullInt();
+			
+			
+			break;
 		case WAS_KINGED:
 			int rowKinged = builder.pullInt();
 			int colKinged = builder.pullInt();
 			
 			break;
 		case PLAYER_MOVE:
+			
+			
 			break;
 		case YOU_WON:
 			break;
@@ -65,6 +72,7 @@ public class Client extends HumanPlayer implements NetworkListener
 	public static final byte YOUR_PLAYER	= 10;
 	
 	public static final byte PLAY_AGAIN		= 11;
+	public static final byte ASSIGN_NUMBER	= 12;
 	
 	// From Client to Server
 	public static final byte RECEIVE_NAME 	= 0;
@@ -78,7 +86,6 @@ public class Client extends HumanPlayer implements NetworkListener
 		Board board = new Board();
 		CheckersUI ui = new CheckersUI(board);
 		ui.print("Play on the line? ");
-		ui.prompt();
 		if(ui.prompt())
 		{
 			Client client = new Client(null, 0, null, ui.getBoard(), ui);
