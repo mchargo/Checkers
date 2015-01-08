@@ -20,7 +20,7 @@ public class Client implements NetworkListener
 		{
 		case REQUEST_NAME:
 			ui.print("What is your name? ");
-			ui.nextLine();
+			name= ui.nextLine();
 			break;
 		case REQUEST_MOVE:
 			
@@ -84,8 +84,8 @@ public class Client implements NetworkListener
 		{
 			Client client = new Client(ui);
 		}else{
-			Game game = new Game(ui);
-			game.newHumanVSHuman();
+			Game game = new Game();
+			game.newHumanVSHuman(ui);
 			game.readyPlayers();
 			game.postGame();
 		}
