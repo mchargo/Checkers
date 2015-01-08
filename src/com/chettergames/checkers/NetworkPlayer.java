@@ -95,6 +95,9 @@ public class NetworkPlayer extends Player
 			// I dont want to play again
 		}
 	}
+	
+	public void moveWasMade(int row1, int col1, int row2, int col2){}
+	public void pieceWasKinged(int row, int col){}
 
 	private NetworkManager network;
 
