@@ -72,6 +72,7 @@ public class Client extends HumanPlayer implements NetworkListener
 			ui.print("You Lost! Would you like to play again? (Y/n)");
 			playAgainPrompt();
 		case YOUR_PLAYER_NUM:
+			playerNumber = builder.pullInt();
 			break;
 		}
 	}
