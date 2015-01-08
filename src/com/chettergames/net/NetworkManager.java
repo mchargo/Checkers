@@ -89,7 +89,7 @@ public class NetworkManager
 
 						while(bytesRead != length)
 						{
-							in.read(buffer, bytesRead, length);
+							bytesRead += in.read(buffer, bytesRead, length);
 
 							if(length == bytesRead) break;
 							Thread.sleep(100);
@@ -97,6 +97,13 @@ public class NetworkManager
 						
 						Output.netok();
 						
+						if(Output.NET_DEBUG_VER)
+						{
+							Output.netVerrln("Packet bytes: ");
+							for(int x = 0;x < buffer.length;x++)
+								Output.netVerrln(x + "  :  " + buffer[x] +  "  :  " + (char)buffer[x]);
+						}
+
 						if(blocking)
 						{
 							Output.netln("Blocker got message");
@@ -143,6 +150,13 @@ public class NetworkManager
 		
 		try
 		{
+			if(Output.NET_DEBUG_VER)
+			{
+				Output.netVerrln("Packet bytes: ");
+				for(int x = 0;x < buffer.length;x++)
+					Output.netVerrln(x + "  :  " + buffer[x] +  "  :  " + (char)buffer[x]);
+			}
+			
 			out.writeInt(buffer.length);
 			out.write(buffer);
 			out.flush();
