@@ -28,15 +28,71 @@ public class Client extends HumanPlayer implements NetworkListener
 			builder = new BufferBuilder(/** HERE */);
 			builder.pushFlag(RECEIVE_NAME);
 			builder.pushString(name);
-			
+
 			network.sendData(builder.getBuffer());
 			break;
 		case REQUEST_MOVE:
+			ui.println(name + ", is your turn.");
 
-			// get the move from the player
+			ui.disableActive();
+			boolean selected = false;
+			int row1 = 0;
+			int col1 = 0;
+			boolean turnOver = false;
 
-			myTurn();
+			while(!turnOver)
+			{
+				Point p = ui.waitForClick();
+				int rowp = (int)p.getX();
+				int colp = (int)p.getY();
 
+				if(selected)
+				{
+					if(rowp == row1 && colp == col1)
+					{
+						selected = false;
+						ui.disableActive();
+					}else{
+						builder = new BufferBuilder(1 + 4 + 4 + 4 + 4);
+						builder.pushFlag(RECEIVE_MOVE);
+						builder.pushInt(row1);
+						builder.pushInt(col1);
+						builder.pushInt(rowp);
+						builder.pushInt(colp);
+
+						byte[] packet = network.blockForMessage();
+
+						//int result = game.move(row1, col1, rowp, colp);
+
+						switch(packet[0])
+						{
+						case MOVE_INVALID:
+							ui.println("You can't make that move!");
+							break;
+						case MOVE_GO_AGAIN:
+							ui.println("You must skip again.");
+							break;
+						case MOVE_VALID:
+							ui.println(name + ", your turn is over.");
+							return;
+						default:
+							break;
+						}
+
+						selected = false;
+						ui.disableActive();
+					}
+				}else{
+					if(p.getX() >= 0 && p.getX() < 8 &&
+							p.getY() >= 0 && p.getY() < 8)
+					{
+						ui.setActive((int)p.getX(), (int)p.getY());
+						selected = true;
+						row1 = rowp;
+						col1 = colp;
+					}
+				}
+			}
 
 			break;
 		case WAS_KINGED:
@@ -141,10 +197,8 @@ public class Client extends HumanPlayer implements NetworkListener
 				}
 			}
 		}
-
-		myTurn();
 	}
-	
+
 	private NetworkManager network;
 	private String name;
 	private int playerNumber;
