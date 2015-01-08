@@ -25,7 +25,7 @@ public class Client extends HumanPlayer implements NetworkListener
 		case REQUEST_NAME:
 			ui.print("What is your name? ");
 			name= ui.nextLine();
-			builder = new BufferBuilder(/** HERE */);
+			builder = new BufferBuilder(name.length() + 5);
 			builder.pushFlag(RECEIVE_NAME);
 			builder.pushString(name);
 
