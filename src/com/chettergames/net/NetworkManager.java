@@ -32,12 +32,12 @@ public class NetworkManager
 		connected = false;
 		blocking = false;
 	}
-	
+
 	public void setNetworkListener(NetworkListener listener)
 	{
 		this.listener = listener;
 	}
-	
+
 	public void connect()
 	{
 		try
@@ -78,13 +78,13 @@ public class NetworkManager
 					{
 						Output.netln("Waiting for message...");
 						int length = in.readInt();
-						
+
 						Output.netln("Message received!!");
 						Output.netln("Message length: " + length);
-						
+
 						byte[] buffer = new byte[length];
 						int bytesRead = 0;
-						
+
 						Output.net("Reading message...\t\t");
 
 						while(bytesRead != length)
@@ -94,9 +94,9 @@ public class NetworkManager
 							if(length == bytesRead) break;
 							Thread.sleep(100);
 						}
-						
+
 						Output.netok();
-						
+
 						if(Output.NET_DEBUG_VER)
 						{
 							Output.netVerrln("Packet bytes: ");
@@ -113,7 +113,7 @@ public class NetworkManager
 							if(listener != null)
 							{
 								Output.netln("NetworkListener got message");
-								listener.messageReceived(buffer);
+								postMessageToListener(buffer);
 							} else {
 								Output.netln("WARNING: Message fell through");
 							}
@@ -132,6 +132,17 @@ public class NetworkManager
 		Output.netok();
 	}
 
+	private void postMessageToListener(final byte[] message)
+	{
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				listener.messageReceived(message);
+			}
+		}).start();
+	}
+
 	/** 
 	 * Send a message across the stream.
 	 * @param buffer The buffer to send.
@@ -147,7 +158,7 @@ public class NetworkManager
 			Output.netln("Not connected to host.");
 			return false;
 		}
-		
+
 		try
 		{
 			if(Output.NET_DEBUG_VER)
@@ -156,7 +167,7 @@ public class NetworkManager
 				for(int x = 0;x < buffer.length;x++)
 					Output.netVerrln(x + "  :  " + buffer[x] +  "  :  " + (char)buffer[x]);
 			}
-			
+
 			out.writeInt(buffer.length);
 			out.write(buffer);
 			out.flush();
@@ -167,40 +178,40 @@ public class NetworkManager
 			Output.netln("Broken Connection");
 			e.printStackTrace();
 			connected = false;
-			
+
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public void messageNotUsed(byte[] message)
 	{
 		if(listener != null)
 			listener.messageReceived(message);
 	}
-	
+
 	public byte[] blockForFlags(byte[] flags)
 	{
 		while(true)
 		{
 			byte[] buffer = blockForMessage();
-			
+
 			for(byte b : flags)
 				if(buffer[0] == b)
 					return buffer;
 			messageNotUsed(buffer);
 		}
 	}
-	
+
 	public synchronized byte[] blockForMessage()
 	{
 		while(blocking) try{Thread.sleep(100);}catch(Exception e){}
-		
+
 		blocking = true;
-		
+
 		Output.net("Blocking for message...\t\t");
-		
+
 		try
 		{
 			latch = new CountDownLatch(1);
@@ -210,9 +221,9 @@ public class NetworkManager
 		{
 			Output.netfail();
 		}
-		
+
 		blocking = false;
-		
+
 		return blockData;
 	}
 
@@ -226,7 +237,7 @@ public class NetworkManager
 
 	private Thread listenThread;
 	private boolean connected;
-	
+
 	private CountDownLatch latch;
 	private boolean blocking;
 	private byte[] blockData;
