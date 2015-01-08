@@ -94,15 +94,9 @@ public class HumanPlayer extends Player
 		ui.println(name + " has lost.");
 	}
 	
-	public void moveWasMade(int row1, int col1, int row2, int col2)
-	{
-		
-	}
-	
-	public void pieceWasKinged(int row, int col)
-	{
-		
-	}
+	public void moveWasMade(int row1, int col1, int row2, int col2){}
+	public void pieceWasKinged(int row, int col){}
+	public void boardWasReset(){}
 
 	private CheckersUI ui;
 }

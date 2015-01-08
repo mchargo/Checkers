@@ -24,6 +24,7 @@ public class NetworkPlayer extends Player
 	{
 		try
 		{
+			network.sendData(new byte[]{EMPTY_BOARD});
 			network.sendData(new byte[]{REQUEST_NAME});
 
 			byte[] data = network.blockForFlags(new byte[]{RECEIVE_NAME});
@@ -123,6 +124,11 @@ public class NetworkPlayer extends Player
 		buffer.pushInt(row);
 		buffer.pushInt(col);
 		network.sendData(buffer.getBuffer());
+	}
+	
+	public void boardWasReset()
+	{
+		network.sendData(new byte[]{SETUP_BOARD});
 	}
 
 	private NetworkManager network;

@@ -28,6 +28,7 @@ public abstract class Player
 	
 	public abstract void youWon(String otherPlayer);
 	public abstract void youLost(String otherPlayer);
+	public abstract void boardWasReset();
 	
 	public void moveWasMade(int row1, int col1, int row2, int col2){}
 	public void pieceWasKinged(int row, int col){}

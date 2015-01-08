@@ -44,13 +44,13 @@ public class BufferBuilder
 		if(b3<0) b3+=256;
 		if(b4<0) b4+=256;
 		
-		int i1 = (byte)(b1<<24);
-		int i2 = (byte)(b2<<16);
-		int i3 = (byte)(b3<<8);
-		int i4 = (byte)(b4);
+		int i1 = b1<<24;
+		int i2 = b2<<16;
+		int i3 = b3<<8;
+		int i4 = b4;
 		index+=4;
 		
-		return i1+i2+i3+i4;
+		return i1 | i2 | i3 | i4;
 	}
 	
 	public void pushFlag(byte flag)
