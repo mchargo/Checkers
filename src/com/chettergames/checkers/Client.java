@@ -13,6 +13,7 @@ public class Client implements NetworkListener
 		this.ui = ui;
 		this.board = ui.getBoard();
 		this.network = network;
+		network.setNetworkListener(this);
 	}
 	
 	public void clearBoard()
