@@ -3,14 +3,13 @@ package com.chettergames.checkers;
 import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkListener;
 
-public class Client implements NetworkListener
+public class Client extends HumanPlayer implements NetworkListener
 {
-	public Client(CheckersUI ui)
+	public Client(Game game, int number, Piece piece, Board board, CheckersUI ui) 
 	{
-		this.ui = ui;
-		board = ui.getBoard();
+		super(game, number, piece, board, ui);
 	}
-	
+
 	@Override
 	public void messageReceived(byte[] buffer) 
 	{
@@ -82,7 +81,7 @@ public class Client implements NetworkListener
 		ui.prompt();
 		if(ui.prompt())
 		{
-			Client client = new Client(ui);
+			Client client = new Client(null, 0, null, ui.getBoard(), ui);
 		}else{
 			Game game = new Game();
 			game.newHumanVSHuman(ui);
