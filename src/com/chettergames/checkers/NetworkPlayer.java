@@ -109,7 +109,11 @@ public class NetworkPlayer extends Player
 	
 	public void pieceWasKinged(int row, int col)
 	{
-		
+		BufferBuilder buffer = new BufferBuilder(1 + 4 + 4);
+		buffer.pushFlag(WAS_KINGED);
+		buffer.pushInt(row);
+		buffer.pushInt(col);
+		network.sendData(buffer.getBuffer());
 	}
 
 	private NetworkManager network;
