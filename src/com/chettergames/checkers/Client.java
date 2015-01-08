@@ -6,13 +6,31 @@ import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkListener;
 import com.chettergames.net.NetworkManager;
 
-public class Client extends HumanPlayer implements NetworkListener
+public class Client implements NetworkListener
 {
-	public Client(Game game, int number, Piece piece, Board board, 
-			CheckersUI ui, NetworkManager network) 
+	public Client(CheckersUI ui, NetworkManager network) 
 	{
-		super(game, number, piece, board, ui);
+		this.ui = ui;
+		this.board = ui.getBoard();
 		this.network = network;
+	}
+	
+	public void clearBoard()
+	{
+		ui.setBoard(new Board());
+		board = ui.getBoard();
+	}
+	
+	public void newBoard()
+	{
+		for(int row=0; row<3; row++)
+			for(int col=0; col<8; col++)
+				if(board.isBlack(row, col))
+					board.placePiece(row, col, new Piece(true, false));
+		for(int row=5; row<8; row++)
+			for(int col=0; col<8; col++)
+				if(board.isBlack(row, col))
+					board.placePiece(row, col, new Piece(false, false));
 	}
 
 	@Override
@@ -22,7 +40,14 @@ public class Client extends HumanPlayer implements NetworkListener
 
 		switch(builder.pullFlag())
 		{
-		case REQUEST_NAME:
+		case EMPTY_BOARD: // no pieces on the board
+			clearBoard();
+			break;
+		case SETUP_BOARD: // the start of the game
+			newBoard();
+			break;
+			
+		case REQUEST_NAME: // request the player's name
 			ui.print("What is your name? ");
 			name= ui.nextLine();
 			builder = new BufferBuilder(name.length() + 5);
@@ -31,7 +56,7 @@ public class Client extends HumanPlayer implements NetworkListener
 
 			network.sendData(builder.getBuffer());
 			break;
-		case REQUEST_MOVE:
+		case REQUEST_MOVE: // request the move from the player.
 			ui.println(name + ", is your turn.");
 
 			ui.disableActive();
@@ -59,6 +84,8 @@ public class Client extends HumanPlayer implements NetworkListener
 						builder.pushInt(col1);
 						builder.pushInt(rowp);
 						builder.pushInt(colp);
+						
+						network.sendData(builder.getBuffer());
 
 						byte[] packet = network.blockForMessage();
 
@@ -101,12 +128,12 @@ public class Client extends HumanPlayer implements NetworkListener
 			board.getPiece(rowKinged, colKinged).kingMe();
 			break;
 		case PLAYER_MOVE:
-			int row1 = builder.pullInt();
-			int col1 = builder.pullInt();
+			row1 = builder.pullInt();
+			col1 = builder.pullInt();
 			int row2 = builder.pullInt();
 			int col2 = builder.pullInt();
-			board.getPiece(row1, col1);
-			board.placePiece(row2, col2, piece);
+			board.placePiece(row2, col2, board.getPiece(row1, col1));
+			board.placePiece(row1, col1, null);
 			int rowDistance=row2-row1;
 			int colDistance=col2-col1;
 			int middleRow=rowDistance/2+row1;
@@ -119,15 +146,18 @@ public class Client extends HumanPlayer implements NetworkListener
 			}
 			break;
 		case YOU_WON:
-			String otherPlayer = builder.pullString();
-			ui.print("You Won! Would you like to play again? (Y/n).");
+			ui.print("You Won! Would you like to play again? ");
 			playAgainPrompt();
 			break;
 		case YOU_LOST:
-			otherPlayer = builder.pullString();
-			ui.print("You Lost! Would you like to play again? (Y/n)");
+			ui.print("You Lost! Would you like to play again? ");
 			playAgainPrompt();
 		case YOUR_PLAYER_NUM:
+			break;
+		case YOUR_COLOR:
+			if(builder.pullString().equalsIgnoreCase("red"))
+				ui.println("You are the Dark pieces.");
+			else ui.println("You are the Light pieces.");
 			break;
 		}
 	}
@@ -144,67 +174,11 @@ public class Client extends HumanPlayer implements NetworkListener
 		network.sendData(builder.getBuffer());
 	}
 
-	@Override
-	public void myTurn() 
-	{
-		ui.println(name + ", is your turn.");
-
-		ui.disableActive();
-		boolean selected = false;
-		int row1 = 0;
-		int col1 = 0;
-		boolean turnOver = false;
-
-		while(!turnOver)
-		{
-			Point p = ui.waitForClick();
-			int rowp = (int)p.getX();
-			int colp = (int)p.getY();
-
-			if(selected)
-			{
-				if(rowp == row1 && colp == col1)
-				{
-					selected = false;
-					ui.disableActive();
-				}else{
-					int result = game.move(row1, col1, rowp, colp);
-
-					switch(result)
-					{
-					case Game.MOVE_INVALID:
-						ui.println("You can't make that move!");
-						break;
-					case Game.MOVE_VALID_GO_AGAIN:
-						ui.println("You must skip again.");
-						break;
-					case Game.MOVE_VALID:
-						ui.println(name + ", your turn is over.");
-						return;
-					}
-
-					selected = false;
-					ui.disableActive();
-				}
-			}else{
-				if(p.getX() >= 0 && p.getX() < 8 &&
-						p.getY() >= 0 && p.getY() < 8)
-				{
-					ui.setActive((int)p.getX(), (int)p.getY());
-					selected = true;
-					row1 = rowp;
-					col1 = colp;
-				}
-			}
-		}
-	}
-
 	private NetworkManager network;
 	private String name;
-	private int playerNumber;
 	private CheckersUI ui;
 	private Board board;
-
+	
 	// Network Flags
 
 	// From Server to Client
@@ -223,6 +197,8 @@ public class Client extends HumanPlayer implements NetworkListener
 	public static final byte YOUR_PLAYER_NUM= 10;
 
 	public static final byte PLAY_AGAIN		= 11;
+	public static final byte SETUP_BOARD	= 12;
+	public static final byte EMPTY_BOARD	= 13;
 
 	// From Client to Server
 	public static final byte RECEIVE_NAME 	= 0;
@@ -242,8 +218,8 @@ public class Client extends HumanPlayer implements NetworkListener
 			int port = 10000;
 
 			NetworkManager manager = new NetworkManager(address, port);
-
-			Client client = new Client(null, 0, null, ui.getBoard(), ui, manager);
+			manager.connect();
+			new Client(ui, manager);
 		}else{
 			Game game = new Game();
 			game.newHumanVSHuman(ui);
