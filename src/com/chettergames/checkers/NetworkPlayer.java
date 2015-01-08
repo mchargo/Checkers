@@ -28,10 +28,12 @@ public class NetworkPlayer extends Player
 			network.sendData(new byte[]{REQUEST_NAME});
 
 			byte[] data = network.blockForFlags(new byte[]{RECEIVE_NAME});
-			BufferBuilder builder = new BufferBuilder(data, 0);
+			BufferBuilder builder = new BufferBuilder(data, 1);
 
 			// get the name from the buffer
 			name = builder.pullString();
+			
+			System.out.println("Got name, ready to play: " + name);
 		}catch(Exception e){Output.neterr(e);}
 	}
 
