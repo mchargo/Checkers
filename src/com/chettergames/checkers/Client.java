@@ -88,7 +88,7 @@ public class Client implements NetworkListener
 						
 						network.sendData(builder.getBuffer());
 
-						byte[] packet = network.blockForMessage();
+						byte[] packet = network.blockForFlags(new byte[]{MOVE_VALID, MOVE_INVALID, MOVE_GO_AGAIN});
 
 						//int result = game.move(row1, col1, rowp, colp);
 
@@ -104,6 +104,7 @@ public class Client implements NetworkListener
 							ui.println(name + ", your turn is over.");
 							return;
 						default:
+							System.out.println("Unkown response from server.");
 							break;
 						}
 

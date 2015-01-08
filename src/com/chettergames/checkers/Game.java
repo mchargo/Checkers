@@ -9,9 +9,7 @@ public class Game
 		board = new Board();
 		newBoard();
 		player1 = new NetworkPlayer(this, 1, new Piece(false, false), board, net1);
-		player1.promptForName();
 		player2 = new NetworkPlayer(this, 2, new Piece(true, false), board, net2);
-		player2.promptForName();
 	}
 	
 	public void newHumanVSHuman(CheckersUI ui)
