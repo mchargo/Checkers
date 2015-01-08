@@ -1,5 +1,7 @@
 package com.chettergames.checkers;
 
+import java.awt.Point;
+
 import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkListener;
 
@@ -25,28 +27,102 @@ public class Client extends HumanPlayer implements NetworkListener
 			
 			// get the move from the player
 			
-			break;
-		case ASSIGN_NUMBER:
-			playerNumber = builder.pullInt();
-			
+			myTurn();
+		
 			
 			break;
 		case WAS_KINGED:
 			int rowKinged = builder.pullInt();
 			int colKinged = builder.pullInt();
-			
+			board.getPiece(rowKinged, colKinged).kingMe();
 			break;
 		case PLAYER_MOVE:
-			
-			
+			int row1 = builder.pullInt();
+			int col1 = builder.pullInt();
+			int row2 = builder.pullInt();
+			int col2 = builder.pullInt();
+			board.getPiece(row1, col1);
+			board.placePiece(row2, col2, piece);
+			int rowDistance=row2-row1;
+			int colDistance=col2-col1;
+			int middleRow=rowDistance/2+row1;
+			int middleCol=colDistance/2+col1;
+			if(rowDistance==1&&colDistance==1)
+			{
+				break;
+			}else{
+				board.placePiece(middleRow, middleCol, null);
+			}
 			break;
 		case YOU_WON:
+			ui.print("You Won! Would you like to play again? (Y/n).");
+			boolean playAgain = ui.prompt();
+			
 			break;
 		case YOU_LOST:
+			ui.print("You Lost! Would you like to play again? (Y/n)");
+			playAgain = ui.prompt();
 			break;
-		case YOUR_PLAYER:
+		case YOUR_PLAYER_NUM:
 			break;
 		}
+	}
+	
+	@Override
+	public void myTurn() 
+	{
+		ui.println(name + ", is your turn.");
+
+		ui.disableActive();
+		boolean selected = false;
+		int row1 = 0;
+		int col1 = 0;
+		boolean turnOver = false;
+
+		while(!turnOver)
+		{
+			Point p = ui.waitForClick();
+			int rowp = (int)p.getX();
+			int colp = (int)p.getY();
+
+			if(selected)
+			{
+				if(rowp == row1 && colp == col1)
+				{
+					selected = false;
+					ui.disableActive();
+				}else{
+					int result = game.move(row1, col1, rowp, colp);
+					
+					switch(result)
+					{
+					case Game.MOVE_INVALID:
+						ui.println("You can't make that move!");
+						break;
+					case Game.MOVE_VALID_GO_AGAIN:
+						ui.println("You must skip again.");
+						break;
+					case Game.MOVE_VALID:
+						ui.println(name + ", your turn is over.");
+						return;
+					}
+					
+					selected = false;
+					ui.disableActive();
+				}
+			}else{
+				if(p.getX() >= 0 && p.getX() < 8 &&
+						p.getY() >= 0 && p.getY() < 8)
+				{
+					ui.setActive((int)p.getX(), (int)p.getY());
+					selected = true;
+					row1 = rowp;
+					col1 = colp;
+				}
+			}
+		}
+
+		myTurn();
 	}
 	
 	private String name;
@@ -69,10 +145,9 @@ public class Client extends HumanPlayer implements NetworkListener
 	public static final byte YOU_WON		= 7;
 	public static final byte YOU_LOST		= 8;
 	public static final byte YOUR_COLOR		= 9;
-	public static final byte YOUR_PLAYER	= 10;
+	public static final byte YOUR_PLAYER_NUM= 10;
 	
 	public static final byte PLAY_AGAIN		= 11;
-	public static final byte ASSIGN_NUMBER	= 12;
 	
 	// From Client to Server
 	public static final byte RECEIVE_NAME 	= 0;
