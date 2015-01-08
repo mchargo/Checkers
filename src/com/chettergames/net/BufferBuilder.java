@@ -14,6 +14,11 @@ public class BufferBuilder
 		this.index = index;
 	}
 	
+	public int getIndex(){return index;}
+	public byte[] getBuffer(){return buffer;}
+	public void setIndex(int index){this.index = index;}
+	public void addToIndex(int num){this.index += num;}
+	
 	public void pushInt(int i)
 	{
 		byte b1 = (byte)(i>>24);

@@ -55,11 +55,13 @@ public class Client extends HumanPlayer implements NetworkListener
 			}
 			break;
 		case YOU_WON:
+			String otherPlayer = builder.pullString();
 			ui.print("You Won! Would you like to play again? (Y/n).");
 			boolean playAgain = ui.prompt();
 			
 			break;
 		case YOU_LOST:
+			otherPlayer = builder.pullString();
 			ui.print("You Lost! Would you like to play again? (Y/n)");
 			playAgain = ui.prompt();
 			break;
