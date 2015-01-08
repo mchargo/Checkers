@@ -152,9 +152,6 @@ public class Client implements NetworkListener
 		case YOU_LOST:
 			ui.print("You Lost! Would you like to play again? ");
 			playAgainPrompt();
-		case YOUR_PLAYER_NUM:
-			playerNumber = builder.pullInt();
-			break;
 		case YOUR_COLOR:
 			if(builder.pullString().equalsIgnoreCase("red"))
 				ui.println("You are the Dark pieces.");

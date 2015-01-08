@@ -1,5 +1,8 @@
 package com.chettergames.checkers;
 
+import java.awt.Point;
+
+import com.chettergames.net.BufferBuilder;
 import com.chettergames.net.NetworkManager;
 
 public class NetworkPlayer extends Player
@@ -8,28 +11,80 @@ public class NetworkPlayer extends Player
 	{
 		super(game, number, piece, board);
 		this.network = network;
+		name = null;
+	}
+
+	@Override
+	public boolean isReady() 
+	{
+		return name != null;
 	}
 
 	@Override
 	public void promptForName() 
 	{
+		network.sendData(new byte[]{REQUEST_NAME});
 		
+		BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
+		
+		// get the name from the buffer
+		if(builder.pullFlag() == RECEIVE_NAME)
+		{
+			
+		} else promptForName();
 	}
 
 	@Override
 	public void myTurn() 
 	{
+		network.sendData(new byte[]{REQUEST_MOVE});
 		
+		BufferBuilder builder = new BufferBuilder(network.blockForMessage(), 0);
+		
+		// get the name from the buffer
+		if(builder.pullFlag() == RECEIVE_MOVE)
+		{
+			// parse row1, col1, row2, col2
+		} else promptForName();
 	}
 
 	@Override
-	public boolean isReady() {return false;}
+	public void youWon(String otherPlayer) 
+	{
+		//ui.println(name + " has won.");
+	}
 
 	@Override
-	public void youWon(String otherPlayer) {}
-
-	@Override
-	public void youLost(String otherPlayer) {}
+	public void youLost(String otherPlayer) 
+	{
+		//ui.println(name + " has lost.");
+	}
 	
 	private NetworkManager network;
+	
+	// From Server to Client
+	public static final byte REQUEST_NAME 	= 0;
+	public static final byte REQUEST_MOVE 	= 1;
+
+	public static final byte MOVE_VALID 	= 2;
+	public static final byte MOVE_INVALID 	= 3;
+	public static final byte MOVE_GO_AGAIN 	= 4;
+
+	public static final byte WAS_KINGED 	= 5;
+	public static final byte PLAYER_MOVE	= 6;  // the opponent has moved
+	public static final byte YOU_WON		= 7;
+	public static final byte YOU_LOST		= 8;
+	public static final byte YOUR_COLOR		= 9;
+	public static final byte YOUR_PLAYER_NUM= 10;
+
+	public static final byte PLAY_AGAIN		= 11;
+	public static final byte SETUP_BOARD	= 12;
+	public static final byte EMPTY_BOARD	= 13;
+
+	// From Client to Server
+	public static final byte RECEIVE_NAME 	= 0;
+	public static final byte RECEIVE_MOVE 	= 1;
+
+	public static final byte LETS_PLAY_AGAIN = 2;
+	public static final byte DONT_PLAY_AGAIN = 3;
 }
