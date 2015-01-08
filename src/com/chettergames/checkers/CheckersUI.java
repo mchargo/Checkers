@@ -409,16 +409,6 @@ public class CheckersUI implements WindowListener
 			repaintThread.start();
 		}
 		
-		public void stopRepainting()
-		{
-			repainting = false;
-			try
-			{
-				repaintThread.interrupt();
-				repaintThread.join();
-			}catch(Exception e){}
-		}
-
 		public Point getClick()
 		{
 			latch = new CountDownLatch(1);

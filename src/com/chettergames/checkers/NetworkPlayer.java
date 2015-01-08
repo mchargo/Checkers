@@ -98,7 +98,13 @@ public class NetworkPlayer extends Player
 	
 	public void moveWasMade(int row1, int col1, int row2, int col2)
 	{
-		
+		BufferBuilder buffer = new BufferBuilder(1 + 4 + 4 + 4 + 4);
+		buffer.pushFlag(PLAYER_MOVE);
+		buffer.pushInt(row1);
+		buffer.pushInt(col1);
+		buffer.pushInt(row2);
+		buffer.pushInt(col2);
+		network.sendData(buffer.getBuffer());
 	}
 	
 	public void pieceWasKinged(int row, int col)
