@@ -22,6 +22,7 @@ public abstract class Player
 		}).start();
 	}
 	
+	public abstract void newGameIsStarting();
 	public abstract void promptForName();
 	public abstract void myTurn();
 	public abstract boolean isReady();

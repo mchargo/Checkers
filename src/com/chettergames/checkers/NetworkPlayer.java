@@ -130,6 +130,11 @@ public class NetworkPlayer extends Player
 	
 	public void boardWasReset()
 	{
+		network.sendData(new byte[]{EMPTY_BOARD});
+	}
+	
+	public void newGameIsStarting()
+	{
 		network.sendData(new byte[]{SETUP_BOARD});
 	}
 

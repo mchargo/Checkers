@@ -20,9 +20,7 @@ public class Game
 		newBoard();
 		ui.setBoard(board);
 		player1 = new HumanPlayer(this, 1, new Piece(false, false), board, ui);
-		player1.promptForName();
 		player2 = new HumanPlayer(this, 2, new Piece(true, false), board, ui);
-		player2.promptForName();
 	}
 	
 	public void readyPlayers()
@@ -37,6 +35,9 @@ public class Game
 				Thread.sleep(100);
 			}catch(Exception e){}
 		}
+		
+		player1.newGameIsStarting();
+		player2.newGameIsStarting();
 	}
 
 	public boolean checkForWin()
